@@ -1,0 +1,5 @@
+*.png
+node_modules
+dist
+*.html
+index.ts
