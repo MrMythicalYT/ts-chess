@@ -232,6 +232,7 @@ abstract class Piece {
   }
   side: Side;
   board: Board;
+  lastMove: [Location, Location] |  null = null
   constructor(board: Board, side: Side) {
     this.board = board;
     this.side = side;

@@ -24,6 +24,7 @@ export class Board {
   ): this {
     this.#board[from[0]][from[1]] = null;
     this.#board[to[0]][to[1]] = piece
+    piece.lastMove = [from, to]
     return this;
     }
     inCheck({ side }: { side?: Side } = {}): boolean {
@@ -48,7 +49,7 @@ export class Board {
         return king;
     }
     toArray() {
-        return this.#board
+        return Array.from(this.#board)
     }
 
     clone() {
