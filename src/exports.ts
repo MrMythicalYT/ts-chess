@@ -1,3 +1,2 @@
-export * from "./pieces/exports"
-export * from "./board/board"
-export * from "./board/enums"
+export * from "./pieces/exports";
+export * from "./board/enums";

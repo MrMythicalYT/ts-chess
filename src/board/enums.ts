@@ -4,7 +4,7 @@ export enum Movement {
     Knight,
     Pawn,
     VerticalHorizantalDiagonal,
-    VerticalHorizantalDiagonal1
+    VerticalHorizantalDiagonal1,
 }
 
 export enum Identifier {
@@ -13,10 +13,15 @@ export enum Identifier {
     Knight = "N",
     Bishop = "B",
     Queen = "Q",
-    King = "K"
+    King = "K",
 }
 
 export enum Side {
     White,
-    Black
+    Black,
+}
+
+export enum CastleSide {
+    Queenside,
+    Kingside,
 }

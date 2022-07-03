@@ -3,8 +3,9 @@ import { Identifier, Movement } from "../board/enums";
 import Piece from "./piece";
 
 class Pawn extends Piece {
-    identifier = Identifier.Pawn
-    movement = Movement.Pawn
+    identifier = Identifier.Pawn;
+    movement = Movement.Pawn;
+    visual = ["♙", "♟"];
 }
 
-export default Pawn
+export default Pawn;

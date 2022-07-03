@@ -3,8 +3,9 @@ import { Identifier, Movement } from "../board/enums";
 import Piece from "./piece";
 
 class Knight extends Piece {
-    identifier = Identifier.Knight
-    movement = Movement.Knight
+    identifier = Identifier.Knight;
+    movement = Movement.Knight;
+    visual = ["♘", "♞"];
 }
 
-export default Knight
+export default Knight;
