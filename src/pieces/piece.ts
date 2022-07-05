@@ -1,4 +1,4 @@
-import { Location, Board } from "../board/board";
+import { Location, Board, LocationResolvable } from "../board/board";
 import { Identifier, Movement, Side } from "../board/enums";
 
 function checkDiagonal(piece: Piece, array: Location[]): void {
@@ -165,12 +165,12 @@ function checkPawn(piece: Piece, array: Location[]) {
         (piece.location[0] === 2 && piece.side === Side.Black) ||
         (piece.location[0] === 6 && piece.side === Side.White)
     ) {
-        if (!piece.board.getPiece(piece.location[0] + add2, piece.location[1]))
+        if (!piece.board.getPiece([piece.location[0] + add2, piece.location[1]]))
             array.push([piece.location[0] + add2, piece.location[1]]);
     }
-    const piece1 = piece.board.getPiece(piece.location[0] + add1, piece.location[0] + 1);
-    const piece2 = piece.board.getPiece(piece.location[0] + add1, piece.location[0] - 1);
-    if (!piece.board.getPiece(piece.location[0] + add1, piece.location[1]))
+    const piece1 = piece.board.getPiece([piece.location[0] + add1, piece.location[0] + 1]);
+    const piece2 = piece.board.getPiece([piece.location[0] + add1, piece.location[0] - 1]);
+    if (!piece.board.getPiece([piece.location[0] + add1, piece.location[1]]))
         array.push([piece.location[0] + add1, piece.location[1]]);
     if (piece1 && piece1.side !== piece.side) array.push([piece.location[0] + add1, piece.location[0] + 1]);
     if (piece2 && piece2.side !== piece.side) array.push([piece.location[0] + add1, piece.location[0] - 1]);
@@ -218,13 +218,13 @@ abstract class Piece {
             this.unlegalizedMoves?.filter((move) => {
                 return !this.board
                     .clone()
-                    .getPiece(...this.location)
+                    .getPiece(this.location)
                     ?.move(move, false)
                     .board.inCheck({ side: this.side });
             }) ?? []
         );
     }
-    move(location: Location, checkLegal?: boolean): this {
+    move(location: LocationResolvable, checkLegal?: boolean): this {
         this.board.move(this, this.location, location, checkLegal);
         return this;
     }

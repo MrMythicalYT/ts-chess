@@ -9,6 +9,16 @@ import { CastleSide, Side } from "./enums";
 
 // format must be [y, x] because of how the array is created
 export type Location = [y: number, x: number];
+export type Coordinates = `${"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h"}${
+    | "1"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
+    | "7"
+    | "8"}`;
+export type LocationResolvable = Location | Coordinates;
 type AllowedCastling = {
     black: CastleSide[];
     white: CastleSide[];
@@ -28,7 +38,8 @@ export class Board {
         this.#board = pieces;
         return this;
     }
-    move(piece: Piece, from: Location, to: Location, checkLegal: boolean = true): this {
+    move(piece: Piece, from: Location, to: LocationResolvable, checkLegal: boolean = true): this {
+        to = Board.resolveCoordinate(to);
         if (checkLegal && !piece.legalizedMoves.some(([y, x]) => to[0] === y && to[1] === x))
             throw new Error("Not a legal move!");
         this.#board[from[0]][from[1]] = null;
@@ -56,8 +67,10 @@ export class Board {
         }
         return false;
     }
-    getPiece(...location: Location): Piece | null {
-        return this.#board[location[0]][location[1]];
+    getPiece(location: LocationResolvable): Piece | null {
+        const loc = Board.resolveCoordinate(location);
+        if (loc) return this.#board[loc[0]][loc[1]];
+        throw new Error("Invalid location");
     }
     get whiteKing(): King {
         const king: King = this.#board
@@ -142,6 +155,49 @@ export class Board {
             throw new Error("Invalid en passant square");
         }
         return board.set(rows);
+    }
+    static resolveCoordinate(coordinate: LocationResolvable): Location {
+        if (Array.isArray(coordinate)) return coordinate;
+        if (!/[a-h][1-8]/.test(coordinate)) throw new Error("Invalid coordinate");
+        return [7 - (Number(coordinate.charAt(1)) - 1), coordinate.charCodeAt(0) - 97];
+    }
+    toFEN(): string {
+        const pieces: string[] = [];
+        this.#board.forEach((row) => {
+            let empty = 0;
+            pieces.push("");
+            row.forEach((piece, i) => {
+                if (piece && empty && i === 7) {
+                    pieces[pieces.length - 1] += empty;
+                    return;
+                }
+                if (piece) {
+                    if (empty) pieces[pieces.length - 1] += empty;
+                }
+                if (!piece) {
+                    empty++;
+                    return;
+                }
+                let identifier = piece.identifier || "p";
+                if (piece.side === Side.White) identifier = identifier.toUpperCase();
+                pieces[pieces.length - 1] += identifier;
+            });
+        });
+        const allowedCastlingWhite: string[] = this.allowedCastling.white.map((c) =>
+            c === CastleSide.Kingside ? "K" : "Q",
+        );
+        const allowedCastlingBlack: string[] = this.allowedCastling.black.map((c) =>
+            c === CastleSide.Kingside ? "k" : "q",
+        );
+        const fen: string[] = [
+            pieces.join("/"),
+            this.turn === Side.White ? "w" : "b",
+            allowedCastlingBlack.concat(allowedCastlingWhite).join(""),
+            this.en_passant ? String.fromCharCode(this.en_passant.location[1] + 97) + this.en_passant.location[0] : "-",
+            this.halfmovecount.toString(),
+            this.fullmovecount.toString(),
+        ];
+        return fen.join(" ");
     }
     toVisual(): string {
         return this.#board.map((row) => row.map((p) => p?.visual[p.side] ?? "-").join(" | ")).join("\n");
