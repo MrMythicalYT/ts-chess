@@ -7,7 +7,7 @@ function checkDiagonal(piece: Piece, array: Location[]): void {
     let y = piece.location[1];
     let newLoc: Location = [x, y];
     while (phase <= 3) {
-        if (x >= 7 || y >= 7 || y <= 0 || x <= 0) {
+        if (x > 7 || y > 7 || y < 0 || x < 0) {
             phase++;
             x = piece.location[0];
             y = piece.location[1];
@@ -43,7 +43,7 @@ function checkVertical(piece: Piece, array: Location[]): void {
     let y = piece.location[1];
     let newLoc: Location = [x, y];
     while (phase <= 1) {
-        if (x >= 7 || y >= 7 || y <= 0 || x <= 0) {
+        if (x > 7 || y > 7 || y < 0 || x < 0) {
             phase++;
             x = piece.location[0];
             y = piece.location[1];
@@ -80,7 +80,7 @@ function checkHorizantal(piece: Piece, array: Location[]): void {
     let y = piece.location[1];
     let newLoc: Location = [x, y];
     while (phase <= 1) {
-        if (x >= 7 || y >= 7 || y <= 0 || x <= 0) {
+        if (x > 7 || y > 7 || y < 0 || x < 0) {
             phase++;
             x = piece.location[0];
             y = piece.location[1];
@@ -162,7 +162,7 @@ function checkPawn(piece: Piece, array: Location[]) {
         add2 = 2;
     if (piece.side === Side.White) (add1 = -1), (add2 = -2);
     if (
-        (piece.location[0] === 2 && piece.side === Side.Black) ||
+        (piece.location[0] === 1 && piece.side === Side.Black) ||
         (piece.location[0] === 6 && piece.side === Side.White)
     ) {
         if (!piece.board.getPiece([piece.location[0] + add2, piece.location[1]]))
@@ -210,8 +210,7 @@ abstract class Piece {
         } else if (this.movement === Movement.VerticalHorizantalDiagonal1) {
             checkVerticalHorizantalDiagonal1(this, valid);
         }
-        if (valid.length) return valid;
-        return [];
+        return valid.filter(m => m.every(i => i >= 0 && i <= 7));
     }
     get legalizedMoves(): Location[] {
         return (
